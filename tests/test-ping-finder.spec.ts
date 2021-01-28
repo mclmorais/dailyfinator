@@ -1,27 +1,29 @@
 import "reflect-metadata";
 import 'mocha';
 import {expect} from 'chai';
-import {PingFinder} from "../src/services/ping-finder";
+import {CommandFinder} from "../src/services/command-finder";
 import {MessageResponder} from "../src/services/message-responder";
 import {instance, mock, verify, when} from "ts-mockito";
 import {Message} from "discord.js";
+import { NamesManager } from "../src/services/names-manager";
 
 describe('MessageResponder', () => {
-  let mockedPingFinderClass: PingFinder;
-  let mockedPingFinderInstance: PingFinder;
+  let mockedPingFinderClass: CommandFinder;
+  let mockedPingFinderInstance: CommandFinder;
   let mockedMessageClass: Message;
   let mockedMessageInstance: Message;
+  let mockedNamesManagerInstance : NamesManager;
 
   let service: MessageResponder;
 
   beforeEach(() => {
-    mockedPingFinderClass = mock(PingFinder);
+    mockedPingFinderClass = mock(CommandFinder);
     mockedPingFinderInstance = instance(mockedPingFinderClass);
     mockedMessageClass = mock(Message);
     mockedMessageInstance = instance(mockedMessageClass);
     setMessageContents();
 
-    service = new MessageResponder(mockedPingFinderInstance);
+    service = new MessageResponder(mockedPingFinderInstance, mockedNamesManagerInstance);
   })
 
   it('should reply', async () => {

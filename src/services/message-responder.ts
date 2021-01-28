@@ -2,22 +2,38 @@ import { Message } from "discord.js";
 import { promises } from "fs";
 import { inject, injectable } from "inversify";
 import { TYPES } from "../types";
-import { PingFinder } from "./ping-finder";
+import { NamesManager } from "./names-manager";
+import { CommandFinder } from "./command-finder";
 
 @injectable()
 export class MessageResponder {
-  private pingFinder: PingFinder;
+  private commandFinder: CommandFinder;
+  private namesManager: NamesManager;
 
   constructor(
-    @inject(TYPES.PingFinder) pingFinder : PingFinder
+    @inject(TYPES.CommandFinder) commandFinder : CommandFinder,
+    @inject(TYPES.NamesManager) namesManager : NamesManager
   ) {
-    this.pingFinder = pingFinder;
+    this.commandFinder = commandFinder;
+    this.namesManager = namesManager;
   }
 
   handle(message : Message) : Promise<Message | Message[]> {
-    if(this.pingFinder.isPing(message.content)) {
+
+    if(this.commandFinder.isPing(message.content)) {
       return message.reply('pong!')
     }
+
+    if(this.commandFinder.isNameAddCommand(message.content)) {
+      this.namesManager.addName(message.content)
+      return message.reply('name added!')
+    }
+
+    if(this.commandFinder.isNameListcommand(message.content)) {
+      return message.reply(this.namesManager.listNames())
+    }
+
+
 
     return Promise.reject();
   }

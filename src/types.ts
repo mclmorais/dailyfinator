@@ -1,9 +1,10 @@
-import { PingFinder } from "./services/ping-finder";
+import { CommandFinder } from "./services/command-finder";
 
 export const TYPES = {
   Bot        : Symbol("Bot"),
   Client     : Symbol("Client"),
   Token      : Symbol("Token"),
-  PingFinder : Symbol("PingFinder"),
+  CommandFinder : Symbol("CommandFinder"),
+  NamesManager : Symbol("NamesManager"),
   MessageResponder : Symbol("MessageResponder")
 }
