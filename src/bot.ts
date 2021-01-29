@@ -1,45 +1,38 @@
-import { Client, Message } from "discord.js"
-import { inject, injectable } from "inversify"
-import { MessageResponder } from "./services/message-responder"
-import { TYPES } from "./types"
+import { Client, Message } from 'discord.js'
+import { inject, injectable } from 'inversify'
+import { CommandInterpreter } from './services/command-interpreter'
+import { TYPES } from './types'
 
 @injectable()
-export class Bot {
+export class Bot
+{
   private client: Client;
-  private messageResponder: MessageResponder;
+  private commandInterpreter: CommandInterpreter;
   private readonly token: string;
 
-  constructor(
+  constructor (
     @inject(TYPES.Client) client: Client,
     @inject(TYPES.Token) token: string,
-    @inject(TYPES.MessageResponder) messageResponder: MessageResponder
-  ) {
-    this.client = client;
-    this.token = token;
-    this.messageResponder = messageResponder;
+    @inject(TYPES.CommandInterpreter) commandInterpreter: CommandInterpreter
+  )
+  {
+    this.client = client
+    this.token = token
+    this.commandInterpreter = commandInterpreter
   }
 
-  public listen(): Promise<string> {
-    this.client.on('message', (message: Message) => {
+  public async listen (): Promise<string>
+  {
+    this.client.on('message', async (message: Message) =>
+    {
+      const interpretedCommand = this.commandInterpreter.interpret(message)
 
-      if (message.author.bot) {
-        console.log('Ignoring bot message!');
-        return;
-      }
+      if (interpretedCommand)
+        console.log(`Successfully interpreted command ${interpretedCommand.name} with arguments ${interpretedCommand.arguments}!`)
+      else
+        console.log('Command not interpreted!')
+    })
 
-      console.log(`Message received! Contents: ${message.content}`)
-
-      this.messageResponder
-      .handle(message)
-      .then(() => {
-        console.log('Response Sent!')
-      })
-      .catch(() => {
-        console.log('Response not sent.')
-      });
-
-    });
-
-    return this.client.login(this.token);
+    return this.client.login(this.token)
   }
 }
