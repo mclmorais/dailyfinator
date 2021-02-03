@@ -6,9 +6,9 @@ import { TYPES } from './types'
 @injectable()
 export class Bot
 {
-  private client: Client;
-  private commandInterpreter: CommandInterpreter;
-  private readonly token: string;
+  private client: Client
+  private commandInterpreter: CommandInterpreter
+  private readonly token: string
 
   constructor (
     @inject(TYPES.Client) client: Client,
@@ -23,15 +23,7 @@ export class Bot
 
   public async listen (): Promise<string>
   {
-    this.client.on('message', async (message: Message) =>
-    {
-      const interpretedCommand = this.commandInterpreter.interpret(message)
-
-      if (interpretedCommand)
-        console.log(`Successfully interpreted command ${interpretedCommand.name} with arguments ${interpretedCommand.arguments}!`)
-      else
-        console.log('Command not interpreted!')
-    })
+    this.client.on('message', (message: Message) => this.commandInterpreter.interpret(message))
 
     return this.client.login(this.token)
   }

@@ -1,37 +1,27 @@
 import { Message } from 'discord.js'
 import { injectable } from 'inversify'
+import { Command } from '../commands/command'
+import { Peng } from '../commands/peng'
+import { Ping } from '../commands/ping'
+import { CommandContext } from '../models/command-context'
 
 @injectable()
 export class CommandInterpreter
 {
-  private prefix = '!';
-
-  private possibleCommands = [
-    { name : 'ping', numberOfArguments : 0 },
-    { name : 'add-name', numberOfArguments : 1 },
-    { name : 'list-names', numberOfArguments : 0 }
-  ]
-
-  public interpret (message : Message): { name: string, arguments: string[] } | null
+  private commands : Command[];
+  constructor ()
   {
-    if (message.author.bot)
-    {
-      console.log('> Ignoring bot message')
-      return null
-    }
+    const commandClasses = [Ping, Peng]
+    this.commands = commandClasses.map(CommandClass => new CommandClass())
+  }
 
-    if (!message.content.startsWith(this.prefix))
-    {
-      console.log('Ignoring unprefixed message!')
-      return null
-    }
+  public interpret (message : Message)
+  {
+    const commandContext = new CommandContext(message, '!')
 
-    const parameters = message.content.slice(this.prefix.length).trim().split(/ +/)
+    const matchedCommand = this.commands.find(command => command.commandName === commandContext.parsedCommandName)
 
-    const [commandName, ...commandArguments] = parameters
-
-    const validatedCommand = this.possibleCommands.find(c => c.name === commandName.toLowerCase() && c.numberOfArguments === commandArguments.length)
-
-    return validatedCommand ? { name : commandName, arguments : commandArguments } : null
+    if (matchedCommand)
+      matchedCommand.run(commandContext)
   }
 }

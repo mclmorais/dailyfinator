@@ -1,18 +1,19 @@
-require('dotenv').config();
+/* eslint-disable import/first */
+import { config } from 'dotenv'
+config()
+import { Bot } from './bot'
+import container from './inversify.config'
+import { TYPES } from './types'
 
-import { Bot } from "./bot";
-import container from "./inversify.config";
-import { TYPES } from "./types";
-
-
-const bot = container.get<Bot>(TYPES.Bot);
+const bot = container.get<Bot>(TYPES.Bot)
 
 bot
   .listen()
-  .then(() => {
+  .then(() =>
+  {
     console.log('Successfully logged in')
   })
-  .catch(error => {
+  .catch(error =>
+  {
     console.error('Error: ', error)
   })
-
