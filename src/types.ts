@@ -5,5 +5,6 @@ export const TYPES = {
   Token              : Symbol('Token'),
   CommandInterpreter : Symbol('CommandInterpreter'),
   NamesManager       : Symbol('NamesManager'),
-  MessageReader      : Symbol('MessageReader')
+  MessageReader      : Symbol('MessageReader'),
+  SqliteClient       : Symbol('SqliteClient')
 }

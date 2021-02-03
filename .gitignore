@@ -117,3 +117,5 @@ dist
 
 *.map
 *.js
+
+*.db

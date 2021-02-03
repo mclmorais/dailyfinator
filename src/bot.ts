@@ -6,20 +6,9 @@ import { TYPES } from './types'
 @injectable()
 export class Bot
 {
-  private client: Client
-  private commandInterpreter: CommandInterpreter
-  private readonly token: string
-
-  constructor (
-    @inject(TYPES.Client) client: Client,
-    @inject(TYPES.Token) token: string,
-    @inject(TYPES.CommandInterpreter) commandInterpreter: CommandInterpreter
-  )
-  {
-    this.client = client
-    this.token = token
-    this.commandInterpreter = commandInterpreter
-  }
+  @inject(TYPES.Client) private client: Client
+  @inject(TYPES.CommandInterpreter) private commandInterpreter: CommandInterpreter
+  @inject(TYPES.Token) private readonly token: string
 
   public async listen (): Promise<string>
   {

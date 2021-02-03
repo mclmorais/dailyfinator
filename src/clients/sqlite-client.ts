@@ -1,0 +1,17 @@
+import { injectable } from 'inversify'
+import { open, Database } from 'sqlite'
+import { Database as originalDatabase } from 'sqlite3'
+
+@injectable()
+export class SqliteClient
+{
+  public database : Database
+
+  public async initialize ()
+  {
+    this.database = await open({
+      filename : 'database.db',
+      driver   : originalDatabase
+    })
+  }
+}

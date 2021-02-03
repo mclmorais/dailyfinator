@@ -2,18 +2,18 @@
 import { config } from 'dotenv'
 config()
 import { Bot } from './bot'
+import { SqliteClient } from './clients/sqlite-client'
 import container from './inversify.config'
 import { TYPES } from './types'
 
 const bot = container.get<Bot>(TYPES.Bot)
+const sqliteDb = container.get<SqliteClient>(TYPES.SqliteClient)
 
-bot
-  .listen()
+sqliteDb.initialize()
   .then(() =>
   {
-    console.log('Successfully logged in')
+    console.log('Database initialized')
+    return bot.listen()
   })
-  .catch(error =>
-  {
-    console.error('Error: ', error)
-  })
+  .then(() => { console.log('Successfully logged in') })
+  .catch(error => { console.error('Error: ', error) })
