@@ -18,11 +18,16 @@ export class AddUser implements Command
   async run (commandContext : CommandContext): Promise<void>
   {
     const mention = this.getUserFromMention(commandContext.args[0])
-    await this.sqliteClient.database.run(
-      'TODO - Implement command'
-    )
-
-    commandContext.originalMessage.channel.send(`User ${mention} detected!`)
+    if (mention)
+    {
+      await this.sqliteClient.database.run(
+        `INSERT INTO Users (DiscordID)
+         VALUES ("${mention}");`
+      )
+      commandContext.originalMessage.channel.send(`User ${mention} detected!`)
+    }
+    else
+      commandContext.originalMessage.channel.send('No user detected!')
   }
 
   private getUserFromMention (mention: string) : string | null

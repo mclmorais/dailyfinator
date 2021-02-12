@@ -13,5 +13,11 @@ export class SqliteClient
       filename : 'database.db',
       driver   : originalDatabase
     })
+
+    await this.database.run(
+      `CREATE TABLE IF NOT EXISTS Users (
+        DiscordID text
+    );`
+    )
   }
 }
