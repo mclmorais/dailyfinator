@@ -3,6 +3,7 @@ import { inject, injectable } from 'inversify'
 import { SqliteClient } from '../clients/sqlite-client'
 import { AddUser } from '../commands/add-user'
 import { Command } from '../commands/command'
+import { DailyStart } from '../commands/daily-start'
 import { ListUsers } from '../commands/list-users'
 import { Peng } from '../commands/peng'
 import { Ping } from '../commands/ping'
@@ -19,7 +20,7 @@ export class CommandInterpreter
   {
     this.sqliteClient = sqliteClient
 
-    const commandClasses = [Ping, Peng, AddUser, ListUsers]
+    const commandClasses = [Ping, Peng, AddUser, ListUsers, DailyStart]
     this.commands = commandClasses.map(CommandClass => new CommandClass(this.sqliteClient))
   }
 
