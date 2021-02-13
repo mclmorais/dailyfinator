@@ -19,5 +19,12 @@ export class SqliteClient
         DiscordID text
     );`
     )
+
+    await this.database.run(
+      `CREATE TABLE IF NOT EXISTS ChannelLinks (
+        textChannelID text,
+        voiceChannelID text
+    );`
+    )
   }
 }

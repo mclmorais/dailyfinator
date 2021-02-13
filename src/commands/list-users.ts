@@ -1,4 +1,5 @@
 import { SqliteClient } from '../clients/sqlite-client'
+import { CommandHelper } from '../helpers/command-helper'
 import { CommandContext } from '../models/command-context'
 import { Command } from './command'
 
@@ -15,16 +16,11 @@ export class ListUsers implements Command
 
   async run (commandContext : CommandContext)
   {
-    const userIDs = await this.sqliteClient.database.all(
+    const userIDs = (await this.sqliteClient.database.all(
       `SELECT *
        FROM Users`
-    )
+    )).map(d => d.DiscordID)
 
-    let responseString = 'Stored users: '
-
-    for (const userID of userIDs.map(u => u.DiscordID))
-      responseString += `<@${userID}>, `
-
-    commandContext.originalMessage.reply(responseString)
+    await commandContext.originalMessage.reply(`Stored users: ${CommandHelper.ListMentions(userIDs)}`)
   }
 }
