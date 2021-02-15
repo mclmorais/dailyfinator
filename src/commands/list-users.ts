@@ -19,7 +19,7 @@ export class ListUsers implements Command
     const userIDs = (await this.sqliteClient.database.all(
       `SELECT *
        FROM Users`
-    )).map(d => d.DiscordID)
+    )).map(d => d.discordID)
 
     await commandContext.originalMessage.reply(`Stored users: ${CommandHelper.ListMentions(userIDs)}`)
   }

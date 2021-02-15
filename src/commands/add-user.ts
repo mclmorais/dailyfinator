@@ -21,7 +21,7 @@ export class AddUser implements Command
     if (mention)
     {
       await this.sqliteClient.database.run(
-        `INSERT INTO Users (DiscordID)
+        `INSERT INTO Users (discordID)
          VALUES ("${mention}");`
       )
       commandContext.originalMessage.channel.send(`User ${mention} detected!`)

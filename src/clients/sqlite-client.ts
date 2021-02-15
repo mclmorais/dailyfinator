@@ -16,7 +16,7 @@ export class SqliteClient
 
     await this.database.run(
       `CREATE TABLE IF NOT EXISTS Users (
-        DiscordID text
+        discordID text
     );`
     )
 
