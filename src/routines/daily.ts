@@ -58,11 +58,12 @@ export class DailyInstance
     this.discordUserIDs = (await this.sqliteClient.database.all('SELECT discordID FROM Users')).map(user => user.discordID)
     this.shuffledDiscordUserIDs = this.shuffle(this.discordUserIDs)
 
-    const startTimeoutDate = dayjs().add(5, 'seconds')
+    const startTimeoutDate = dayjs().add(5, 'minutes')
 
     const message = await this.channel.send(
 `Aguardando os seguintes usuários entrarem no canal de voz:
 > ${CommandHelper.ListMentions(this.shuffledDiscordUserIDs, '\n> ')}
+Caso algum usuário não esteja presente, a daily começará em ${startTimeoutDate.toISOString()}.
 Aperte na 🏁 para encerrar.`
     )
 
