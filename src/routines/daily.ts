@@ -60,19 +60,6 @@ export class DailyInstance
 
     const startTimeoutDate = dayjs().add(5, 'minutes')
 
-    const message = await this.channel.send(
-`Aguardando os seguintes usuários entrarem no canal de voz:
-> ${CommandHelper.ListMentions(this.shuffledDiscordUserIDs, '\n> ')}
-Caso algum usuário não esteja presente, a daily começará em ${startTimeoutDate.toISOString()}.
-Aperte na 🏁 para encerrar.`
-    )
-
-    await this.addFinishReaction(message, () =>
-    {
-      running = false
-      returnValue = 'interrupt'
-    })
-
     const channelLink = (await this.sqliteClient.database.get(
       `SELECT *
        FROM ChannelLinks
@@ -81,11 +68,28 @@ Aperte na 🏁 para encerrar.`
 
     const voiceChannel = this.guild.channels.cache.get(channelLink.voiceChannelID)
 
+    const missingUsers = this.discordUserIDs.filter(id => !voiceChannel.members.get(id))
+
+    if (missingUsers.length)
+    {
+      const message = await this.channel.send(
+`Aguardando os seguintes usuários entrarem no canal de voz:
+> ${CommandHelper.ListMentions(missingUsers, '\n> ')}
+Caso algum usuário não esteja presente, a daily começará em ${startTimeoutDate.toISOString()}.
+Aperte na 🏁 para encerrar.`
+      )
+      await this.addFinishReaction(message, () =>
+      {
+        running = false
+        returnValue = 'interrupt'
+      })
+    }
+
     while (running)
     {
       const missingUsers = this.discordUserIDs.filter(id => !voiceChannel.members.get(id))
 
-      if (!missingUsers)
+      if (missingUsers.length <= 0)
       {
         this.channel.send('Todo mundo está aqui!')
         running = false
@@ -103,7 +107,8 @@ Aperte na 🏁 para encerrar.`
   private async mainPhase ()
   {
     let running = true
-    const message = await this.channel.send('Agora a daily começa!')
+    const order = this.shuffle(this.discordUserIDs).reduce((fullString, id, index) => `${fullString}\n> ${index + 1}. <@${id}>`, '')
+    const message = await this.channel.send(`Ordem dos participantes:\n${order}`)
     await this.addFinishReaction(message, () => { running = false })
     while (running)
       await new Promise(resolve => setTimeout(resolve, 1000))
